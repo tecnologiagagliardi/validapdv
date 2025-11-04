@@ -145,15 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
  // Compartilhar (abrir Outlook e copiar dados)
 shareButton.addEventListener('click', async () => {
   const textData =
-`📋 *Analise de Cliente*
+`📋 Analise de Cliente
 
 Código: ${clientCode}
 Telefone: ${phoneInput.value}
 E-mail: ${emailInput.value}
 Latitude: ${locationData.latitude.toFixed(6)}
 Longitude: ${locationData.longitude.toFixed(6)}
-
-📅 Enviado em: ${new Date().toLocaleString('pt-BR')}
 `;
 
   const destinatario = "informatica@grupogagliardi.com";
@@ -161,7 +159,7 @@ Longitude: ${locationData.longitude.toFixed(6)}
   const corpo = encodeURIComponent(textData);
 
   try {
-    alert('📨 Abrindo o Outlook...');
+    alert('clique em fechar');
 
     // Tenta abrir diretamente no Outlook
     const outlookLink = `ms-outlook://compose?to=${destinatario}&subject=${encodeURIComponent(assunto)}&body=${corpo}`;
