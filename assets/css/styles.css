@@ -1,0 +1,126 @@
+@font-face {
+  font-family: 'Magistral';
+  src: url(../fonts/Magistral-Medium.ttf) format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+*{
+  font-family: 'Magistral', sans-serif;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#header-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.container {
+    width: 90%;
+    max-width: 500px;
+    background: #eeeeee;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #eeeeee;
+    box-sizing: border-box;
+    flex-direction: column;
+}
+
+h1,
+h2 {
+  text-align: center;
+  color: #c61414;
+  font-size: 1.1rem;
+}
+
+label {
+
+}
+
+button,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    box-sizing: border-box;
+}
+
+input {
+    color: rgb(110, 110, 248);
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    box-sizing: border-box;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+#map {
+  height: 300px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+#photo-preview {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  display: block;
+  width: 100%;
+}
+
+#photo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  width: 100%;
+}
+
+#info {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #3b3b3b;
+  line-height: 1.5;
+}
+
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #777;
+    margin-top: 0px;
+    padding: 10px;
+    background-color: #eeeeee;
+    border-top: 1px solid #ddd;
+}
