@@ -159,7 +159,7 @@ Longitude: ${locationData.longitude.toFixed(6)}`;
     alert('✅ Informações copiadas para a área de transferência!\n\nO Outlook será aberto. Basta colar as informações no corpo do e-mail.');
 
     // 3️⃣ Abre o Outlook (ou app de e-mail padrão)
-    const destinatario = "idepsocial@gmail.com"; // pode alterar
+    const destinatario = "informatica@grupogagliardi.com"; // pode alterar
     const assunto = `Cadastro de Cliente - ${clientCode}`;
     const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}`;
 
