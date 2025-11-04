@@ -144,32 +144,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
  // Compartilhar (abrir Outlook e copiar dados)
 shareButton.addEventListener('click', async () => {
-  const textData = 
-`Código Cliente: ${clientCode}
-Tel.: ${phoneInput.value}
+  const textData =
+`📋 *Analise de Cliente*
+
+Código: ${clientCode}
+Telefone: ${phoneInput.value}
 E-mail: ${emailInput.value}
 Latitude: ${locationData.latitude.toFixed(6)}
-Longitude: ${locationData.longitude.toFixed(6)}`;
+Longitude: ${locationData.longitude.toFixed(6)}
+
+📅 Enviado em: ${new Date().toLocaleString('pt-BR')}
+`;
+
+  const destinatario = "informatica@grupogagliardi.com";
+  const assunto = `Analise de Cliente - ${clientCode}`;
+  const corpo = encodeURIComponent(textData);
 
   try {
-    // 1️⃣ Copia os dados para a área de transferência
-    await navigator.clipboard.writeText(textData);
+    alert('📨 Abrindo o Outlook...');
 
-    // 2️⃣ Mostra mensagem de confirmação
-    alert('✅ Informações copiadas para a área de transferência!\n\nO Outlook será aberto. Basta colar as informações no corpo do e-mail.');
+    // Tenta abrir diretamente no Outlook
+    const outlookLink = `ms-outlook://compose?to=${destinatario}&subject=${encodeURIComponent(assunto)}&body=${corpo}`;
+    window.location.href = outlookLink;
 
-    // 3️⃣ Abre o Outlook (ou app de e-mail padrão)
-    const destinatario = "informatica@grupogagliardi.com"; // pode alterar
-    const assunto = `Cadastro de Cliente - ${clientCode}`;
-    const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}`;
-
-    window.location.href = mailtoLink;
-    
+    // Se não abrir o Outlook em 1.5s, tenta abrir o Mail padrão
+    setTimeout(() => {
+      const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}&body=${corpo}`;
+      window.location.href = mailtoLink;
+    }, 1500);
   } catch (error) {
-    console.error('Erro ao copiar os dados:', error);
-    alert('❌ Não foi possível copiar as informações. Verifique as permissões do navegador.');
+    console.error("Erro ao abrir o Outlook:", error);
+    alert("Não foi possível abrir o Outlook. Verifique as permissões.");
   }
 });
+
 
 
   // Sanitize inputs em tempo real
