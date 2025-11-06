@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       info.innerHTML = `
         <strong>Código Cliente:</strong> ${clientCode}<br>
         <strong>Tel.:</strong> ${phone || 'Não fornecido'}<br>
-        <strong>Motivo:</strong> ${motivoSelect}}<br>
+        <strong>Motivo:</strong> ${motivoSelect.value === 'Outro' ? `Outro: ${outrosInput.value}` : motivoSelect.value}<br>
         <strong>Latitude:</strong> ${locationData.latitude.toFixed(6)}<br>
         <strong>Longitude:</strong> ${locationData.longitude.toFixed(6)}<br>
       `;
