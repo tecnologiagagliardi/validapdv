@@ -65,7 +65,7 @@ textarea {
     box-sizing: border-box;
 }
 
-input {
+input, select {
     color: rgb(110, 110, 248);
     width: 100%;
     padding: 10px;
