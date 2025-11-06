@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mapContainer = document.getElementById('map');
   const mapTitle = document.getElementById('map-title');
   const phoneInput = document.getElementById('phone');
-  const emailInput = document.getElementById('email');
   const motivoSelect = document.getElementById('motivo');
   const outrosInput = document.getElementById('outros');
 
@@ -43,8 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return phone;
   };
 
-  // Validação de e-mail
-  const validateEmail = (email) => /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email);
 
   // Função para capturar a foto
   const capturePhoto = async () => {
@@ -87,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
   capturePhotoButton.addEventListener('click', async () => {
     clientCode = sanitizeClientCode(clientCodeInput.value);
     const phone = sanitizePhone(phoneInput.value);
-    const email = emailInput.value;
+
 
     if (!validateClientCode(clientCode)) {
       alert('Código Cliente inválido!\n\nExemplo: C000001');
@@ -99,10 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (email && !validateEmail(email)) {
-      alert('E-mail inválido!\n\nExemplo: exemplo@dominio.com');
-      return;
-    }
 
     try {
       await capturePhoto();
@@ -116,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
       info.innerHTML = `
         <strong>Código Cliente:</strong> ${clientCode}<br>
         <strong>Tel.:</strong> ${phone || 'Não fornecido'}<br>
-        <strong>E-mail:</strong> ${email || 'Não fornecido'}<br>
         <strong>Latitude:</strong> ${locationData.latitude.toFixed(6)}<br>
         <strong>Longitude:</strong> ${locationData.longitude.toFixed(6)}<br>
       `;
@@ -160,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
 const textData = 
   `Código Cliente: ${clientCode}\n` +
   `Tel.: ${phoneInput.value}\n` +
-  `E-mail: ${emailInput.value}\n` +
   `Motivo: ${motivo}\n` +
   `Latitude: ${locationData.latitude.toFixed(6)}\n` +
   `Longitude: ${locationData.longitude.toFixed(6)}`;
