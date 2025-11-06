@@ -34,11 +34,18 @@
                 <input type="tel" id="phone" maxlength="15" placeholder="Ex: (85) 91234-4321"
                     aria-describedby="phone-info">
 
-                <label for="email" aria-label="E-mail">
-                    <img src="assets/images/mail.png" alt="icone email">&nbsp;<b>E-mail do Cliente:</b>
-                </label>
+                <label for="motivo" aria-label="Motivo da retirada">
+  <img src="assets/images/cardcode.png" alt="icone motivo">&nbsp;<b>Motivo da retirada do cliente:</b>
+</label>
+<select name="motivo" id="motivo" required>
+  <option value="">Selecione</option>
+  <option value="Cliente Fechado">Cliente Fechado</option>
+  <option value="Cliente não existe">Cliente não existe</option>
+  <option value="Outro">Outro</option>
+</select>
 
-                <input type="email" id="email" placeholder="Ex: exemplo@dominio.com" aria-describedby="email-info">
+<input type="text" name="outros" id="outros" placeholder="Explique" style="display: none;">
+
 
                 <h2>Aponte a câmera para a fachada do cliente</h2>
                 <button type="button" id="capture-photo" aria-label="Capturar Foto">Capturar Foto e Coordenadas</button>
