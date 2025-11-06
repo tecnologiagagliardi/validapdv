@@ -141,36 +141,40 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Compartilhar
+  shareButton.addEventListener('click', async () => {
+    const textData = `Código Cliente: ${clientCode}\nTel.: ${phoneInput.value}\nE-mail: ${emailInput.value}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`;
 
- // Compartilhar (abrir Outlook e copiar dados)
-shareButton.addEventListener('click', async () => {
-  const textData = 
-`Código Cliente: ${clientCode}
-Tel.: ${phoneInput.value}
-E-mail: ${emailInput.value}
-Latitude: ${locationData.latitude.toFixed(6)}
-Longitude: ${locationData.longitude.toFixed(6)}`;
+    try {
+      await navigator.clipboard.writeText(textData);
+      alert('Informações copiadas para a área de transferência!\n\nCaso apareça apenas a foto basta colar as informações!');
+    } catch (error) {
+      console.error('Erro ao copiar os dados:', error);
+      alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
+    }
 
-  try {
-    // 1️⃣ Copia os dados para a área de transferência
-    await navigator.clipboard.writeText(textData);
-
-    // 2️⃣ Mostra mensagem de confirmação
-    alert('✅ Informações copiadas para a área de transferência!\n\nO Outlook será aberto. Basta colar as informações no corpo do e-mail.');
-
-    // 3️⃣ Abre o Outlook (ou app de e-mail padrão)
-    const destinatario = "idepsocial@gmail.com"; // pode alterar
-    const assunto = `Cadastro de Cliente - ${clientCode}`;
-    const mailtoLink = `mailto:${destinatario}?subject=${encodeURIComponent(assunto)}`;
-
-    window.location.href = mailtoLink;
-    
-  } catch (error) {
-    console.error('Erro ao copiar os dados:', error);
-    alert('❌ Não foi possível copiar as informações. Verifique as permissões do navegador.');
-  }
-});
-
+    if (navigator.canShare && navigator.canShare({ files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })] })) {
+      try {
+        const shareData = {
+          title: 'Captura de Coordenadas',
+          text: textData,
+          files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })],
+        };
+        await navigator.share(shareData);
+      } catch (error) {
+        console.log('Erro ao compartilhar os dados:', error);
+        alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
+      }
+    } else if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Cadastro de Cliente', text: textData });
+      } catch (error) {
+        console.log('Erro ao compartilhar texto:', error);
+        alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
+      }
+    } else {
+      alert('Seu dispositivo não suporta a funcionalidade de compartilhamento!');
+    }
+  });
 
   // Sanitize inputs em tempo real
   clientCodeInput.addEventListener('input', () => {
