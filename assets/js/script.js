@@ -9,6 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const mapTitle = document.getElementById('map-title');
   const phoneInput = document.getElementById('phone');
   const emailInput = document.getElementById('email');
+  const motivoSelect = document.getElementById('motivo');
+  const outrosInput = document.getElementById('outros');
+
+  motivoSelect.addEventListener('change', () => {
+    if (motivoSelect.value === 'Outro') {
+      outrosInput.style.display = 'block';
+      outrosInput.required = true;
+    } else {
+      outrosInput.style.display = 'none';
+      outrosInput.required = false;
+      outrosInput.value = '';
+    }
+  });
+
 
   let clientCode = '';
   let photoBlob = null;
@@ -142,7 +156,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Compartilhar
   shareButton.addEventListener('click', async () => {
-    const textData = `Código Cliente: ${clientCode}\nTel.: ${phoneInput.value}\nE-mail: ${emailInput.value}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`;
+    const motivo = motivoSelect.value === 'Outro' ? `Outro: ${outrosInput.value}` : motivoSelect.value;
+const textData = 
+  `Código Cliente: ${clientCode}\n` +
+  `Tel.: ${phoneInput.value}\n` +
+  `E-mail: ${emailInput.value}\n` +
+  `Motivo: ${motivo}\n` +
+  `Latitude: ${locationData.latitude.toFixed(6)}\n` +
+  `Longitude: ${locationData.longitude.toFixed(6)}`;
+
 
     try {
       await navigator.clipboard.writeText(textData);
