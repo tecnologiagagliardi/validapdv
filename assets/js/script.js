@@ -148,35 +148,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Compartilhar
- shareButton.addEventListener('click', async () => {
-  const numeroDestino = "5585981001577"; // WhatsApp no formato internacional
-  const motivo = motivoSelect.value === 'Outro' ? `Outro: ${outrosInput.value}` : motivoSelect.value;
 
-  const textData = 
-    `📋 *Cadastro Cliente*\n\n` +
-    `🔢 Código Cliente: ${clientCode}\n` +
-    `📞 Tel.: ${phoneInput.value}\n` +
-    `📝 Motivo: ${motivo}\n` +
-    `📍 Latitude: ${locationData.latitude.toFixed(6)}\n` +
-    `📍 Longitude: ${locationData.longitude.toFixed(6)}\n\n` +
-    `📸 *A foto tirada deve ser anexada manualmente ao enviar!*`;
+shareButton.addEventListener('click', async () => {
+    const textData = `Código Cliente: ${clientCode}\nTel.: ${phoneInput.value}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}\nMotivo: ${motivoSelect.value === 'Outro' ? `Outro: ${outrosInput.value}` : motivoSelect.value} `;
 
-  try {
-    // Copia as informações para a área de transferência (opcional)
-    await navigator.clipboard.writeText(textData);
+    try {
+      await navigator.clipboard.writeText(textData);
+      alert('Informações copiadas para a área de transferência!\n\nCaso apareça apenas a foto basta colar as informações!');
+    } catch (error) {
+      console.error('Erro ao copiar os dados:', error);
+      alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
+    }
 
-    // Monta o link do WhatsApp com o texto formatado
-    const linkWhats = `https://wa.me/${numeroDestino}?text=${encodeURIComponent(textData)}`;
-
-    // Abre o WhatsApp Web ou App no celular
-    window.open(linkWhats, "_blank");
-
-  } catch (error) {
-    console.error('Erro ao copiar ou abrir WhatsApp:', error);
-    alert('Não foi possível enviar automaticamente. Copie e envie manualmente!');
-  }
-});
-
+    if (navigator.canShare && navigator.canShare({ files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })] })) {
+      try {
+        const shareData = {
+          title: 'Captura de Coordenadas',
+          text: textData,
+          files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })],
+        };
+        await navigator.share(shareData);
+      } catch (error) {
+        console.log('Erro ao compartilhar os dados:', error);
+        alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
+      }
+    } else if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Cadastro de Cliente', text: textData });
+      } catch (error) {
+        console.log('Erro ao compartilhar texto:', error);
+        alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
+      }
+    } else {
+      alert('Seu dispositivo não suporta a funcionalidade de compartilhamento!');
+    }
+  });
 
   // Sanitize inputs em tempo real
   clientCodeInput.addEventListener('input', () => {
