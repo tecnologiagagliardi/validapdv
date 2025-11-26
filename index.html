@@ -23,29 +23,32 @@
                 <label for="client-code" aria-label="Código do Cliente">
                     <img src="assets/images/cardcode.png" alt="icone cliente">&nbsp;<b>Código do Cliente:</b>
                 </label>
+               
+
 
                 <input type="text" id="client-code" maxlength="8" placeholder="Ex: C123456" required
                     aria-describedby="client-code-info">
+                     <label><b>Razão Social:</b></label>
+                <input type="text" id="razao-social" readonly placeholder="(auto)" />
 
-                <label for="phone" aria-label="Telefone">
-                    <img src="assets/images/phone.png" alt="icone telefone">&nbsp;<b>Telefone do Cliente:</b>
-                </label>
+                <label><b>Vendedor:</b></label>
+                <input type="text" id="vendedor" readonly placeholder="(auto)" />
 
-                <input type="tel" id="phone" maxlength="15" placeholder="Ex: (85) 91234-4321"
-                    aria-describedby="phone-info">
+
+
 
                 <label for="motivo" aria-label="Motivo da retirada">
-  <img src="assets/images/cardcode.png" alt="icone motivo">&nbsp;<b>Motivo da retirada do cliente:</b>
-</label>
-<select name="motivo" id="motivo" required>
-  <option value="">Selecione</option>
-  <option value="Cliente Fechado">Cliente Fechado</option>
-  <option value="Cliente não existe">Cliente não existe</option>
-  <option value="Cliente não revende produto automotivo">Não revende produto automotivo</option>
-  <option value="Outro">Outro</option>
-</select>
+                    <img src="assets/images/cardcode.png" alt="icone motivo">&nbsp;<b>Motivo da retirada do cliente:</b>
+                </label>
+                <select name="motivo" id="motivo" required>
+                    <option value="">Selecione</option>
+                    <option value="Cliente Fechado">Cliente Fechado</option>
+                    <option value="Cliente não existe">Cliente não existe</option>
+                    <option value="Cliente não revende produto automotivo">Não revende produto automotivo</option>
+                    <option value="Outro">Outro</option>
+                </select>
 
-<input type="text" name="outros" id="outros" placeholder="Explique" style="display: none;">
+                <input type="text" name="outros" id="outros" placeholder="Explique" style="display: none;">
 
 
                 <h2>Aponte a câmera para a fachada do cliente</h2>
@@ -84,7 +87,3 @@
 </body>
 
 </html>
-
-
-
-

@@ -5,45 +5,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const photoPreview = document.getElementById('photo-preview');
   const info = document.getElementById('info');
   const shareButton = document.getElementById('share-data');
-  const mapContainer = document.getElementById('map');
   const mapTitle = document.getElementById('map-title');
-  const phoneInput = document.getElementById('phone');
   const motivoSelect = document.getElementById('motivo');
   const outrosInput = document.getElementById('outros');
 
-  motivoSelect.addEventListener('change', () => {
-    if (motivoSelect.value === 'Outro') {
-      outrosInput.style.display = 'block';
-      outrosInput.required = true;
-    } else {
-      outrosInput.style.display = 'none';
-      outrosInput.required = false;
-      outrosInput.value = '';
-    }
-  });
-
+  const razaoInput = document.getElementById('razao-social');
+  const vendedorInput = document.getElementById('vendedor');
 
   let clientCode = '';
   let photoBlob = null;
   let locationData = {};
   let map = null;
+  let baseClientes = {};
+
+  // Mostrar/esconder campo "Outro"
+  motivoSelect.addEventListener('change', () => {
+    const outro = motivoSelect.value === 'Outro';
+    outrosInput.style.display = outro ? 'block' : 'none';
+    outrosInput.required = outro;
+    if (!outro) outrosInput.value = '';
+  });
 
   // Validação do Código do Cliente
   const validateClientCode = (code) => /^C\d{6,7}$/.test(code);
   const sanitizeClientCode = (code) => code.toUpperCase().replace(/[^C0-9]/g, '');
 
-  // Validação do telefone
-  const validatePhone = (phone) => /^\(\d{2}\)\s?\d{5}-\d{4}$/.test(phone);
-  const sanitizePhone = (phone) => {
-    const cleaned = phone.replace(/\D/g, '');
-    if (cleaned.length === 11) {
-      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
-    }
-    return phone;
-  };
-
-
-  // Função para capturar a foto
+  // Capturar foto
   const capturePhoto = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -52,26 +39,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const video = document.createElement('video');
       video.srcObject = stream;
-      video.play();
+      await video.play();
 
       const canvas = document.createElement('canvas');
-      const capture = new Promise((resolve) => {
-        video.addEventListener('loadedmetadata', () => {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          canvas.getContext('2d').drawImage(video, 0, 0);
-          stream.getTracks().forEach(track => track.stop());
-          resolve(canvas.toDataURL('image/jpeg'));
-        });
-      });
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      stream.getTracks().forEach(track => track.stop());
 
-      const photoDataURL = await capture;
+      const photoDataURL = canvas.toDataURL('image/jpeg');
       photoBlob = await (await fetch(photoDataURL)).blob();
       photoPreview.src = photoDataURL;
       photoPreview.style.display = 'block';
     } catch (error) {
-      console.error('Erro ao acessar a câmera:', error);
-      alert('Erro ao acessar a câmera!\n\nPermita que o APP acesse a câmera do dispositivo!');
+      alert('Erro ao acessar a câmera! Permita acesso à câmera.');
     }
   };
 
@@ -80,27 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
       navigator.geolocation.getCurrentPosition(resolve, reject)
     );
 
-  // Capturar foto e localização
+  // Processar captura
   capturePhotoButton.addEventListener('click', async () => {
     clientCode = sanitizeClientCode(clientCodeInput.value);
-    const phone = sanitizePhone(phoneInput.value);
-
 
     if (!validateClientCode(clientCode)) {
       alert('Código Cliente inválido!\n\nExemplo: C000001');
       return;
     }
 
-    if (phone && !validatePhone(phone)) {
-      alert('Telefone inválido!\n\nExemplo: (85) 91234-4321');
-      return;
-    }
-
-
     try {
       await capturePhoto();
-
       const position = await getUserLocation();
+
       locationData = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -108,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       info.innerHTML = `
         <strong>Código Cliente:</strong> ${clientCode}<br>
-        <strong>Tel.:</strong> ${phone || 'Não fornecido'}<br>
+        <strong>Razão Social:</strong> ${razaoInput.value}<br>
+        <strong>Vendedor:</strong> ${vendedorInput.value}<br>
         <strong>Motivo:</strong> ${motivoSelect.value === 'Outro' ? `Outro: ${outrosInput.value}` : motivoSelect.value}<br>
         <strong>Latitude:</strong> ${locationData.latitude.toFixed(6)}<br>
         <strong>Longitude:</strong> ${locationData.longitude.toFixed(6)}<br>
@@ -122,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         map = L.map('map').setView([locationData.latitude, locationData.longitude], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
-          attribution: '© OpenStreetMap contributors',
         }).addTo(map);
       } else {
         map.setView([locationData.latitude, locationData.longitude], 15);
@@ -137,59 +110,75 @@ document.addEventListener('DOMContentLoaded', () => {
         .openPopup();
 
     } catch (error) {
-      console.error('Erro ao acessar a localização:', error);
-      alert('Erro ao acessar a localização!\n\nVerifique se o GPS do dispositivo está ativo!');
+      alert('Erro ao acessar a localização! Ative o GPS.');
     }
   });
 
   // Reiniciar
-  restartProcessButton.addEventListener('click', () => {
-    location.reload();
-  });
+  restartProcessButton.addEventListener('click', () => location.reload());
 
   // Compartilhar
-
-shareButton.addEventListener('click', async () => {
-    const textData = `Código Cliente: ${clientCode}\nTel.: ${phoneInput.value}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}\nMotivo: ${motivoSelect.value === 'Outro' ? `Outro: ${outrosInput.value}` : motivoSelect.value} `;
+  shareButton.addEventListener('click', async () => {
+    const textData = `
+Código Cliente: ${clientCode}
+Razão Social: ${razaoInput.value}
+Vendedor: ${vendedorInput.value}
+Motivo: ${motivoSelect.value === 'Outro' ? `Outro: ${outrosInput.value}` : motivoSelect.value}
+Latitude: ${locationData.latitude.toFixed(6)}
+Longitude: ${locationData.longitude.toFixed(6)}
+`.trim();
 
     try {
       await navigator.clipboard.writeText(textData);
-      alert('Informações copiadas para a área de transferência!\n\nCaso apareça apenas a foto basta colar as informações!');
-    } catch (error) {
-      console.error('Erro ao copiar os dados:', error);
-      alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
-    }
+    } catch (e) {}
 
-    if (navigator.canShare && navigator.canShare({ files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })] })) {
-      try {
-        const shareData = {
-          title: 'Captura de Coordenadas',
-          text: textData,
-          files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })],
-        };
-        await navigator.share(shareData);
-      } catch (error) {
-        console.log('Erro ao compartilhar os dados:', error);
-        alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
-      }
-    } else if (navigator.share) {
-      try {
-        await navigator.share({ title: 'Cadastro de Cliente', text: textData });
-      } catch (error) {
-        console.log('Erro ao compartilhar texto:', error);
-        alert('Clique em compartilhar!\n\nCaso apareça apenas a foto basta colar as informações!');
-      }
+    const file = new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        title: 'Visita Registrada',
+        text: textData,
+        files: [file]
+      });
     } else {
-      alert('Seu dispositivo não suporta a funcionalidade de compartilhamento!');
+      await navigator.share({
+        title: 'Visita Registrada',
+        text: textData
+      });
     }
   });
 
-  // Sanitize inputs em tempo real
+  // Sanitização
   clientCodeInput.addEventListener('input', () => {
     clientCodeInput.value = sanitizeClientCode(clientCodeInput.value);
   });
 
-  phoneInput.addEventListener('input', () => {
-    phoneInput.value = sanitizePhone(phoneInput.value);
+  // Carregar banco de clientes
+  async function carregarClientes() {
+    const resposta = await fetch('assets/data/clientes.txt');
+    const texto = await resposta.text();
+
+    const linhas = texto.split('\n').map(l => l.trim()).filter(Boolean);
+
+    linhas.slice(1).forEach(linha => {
+      const [codigo, razao, vendedor] = linha.split(';').map(v => v.trim());
+      baseClientes[codigo.toUpperCase()] = { razao, vendedor };
+    });
+  }
+
+  carregarClientes();
+
+  // Autocomplete cliente
+  clientCodeInput.addEventListener('input', () => {
+    const codigo = clientCodeInput.value.toUpperCase();
+
+    if (baseClientes[codigo]) {
+      razaoInput.value = baseClientes[codigo].razao;
+      vendedorInput.value = baseClientes[codigo].vendedor;
+    } else {
+      razaoInput.value = '';
+      vendedorInput.value = '';
+    }
   });
+
 });
